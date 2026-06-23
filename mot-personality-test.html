@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOT 关键时刻人格测试 | 你是 MYCO 还是 TNS？</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  background:linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 40%,#16213e 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  color:#e0e0e0;padding:20px;
+}
+.app{
+  width:100%;max-width:680px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;padding:48px 40px;
+  position:relative;overflow:hidden;
+}
+.app::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#f39c12,#e74c3c,#2980b9,#27ae60);
+}
+.screen{display:none}
+.screen.active{display:block}
+
+/* START */
+.start-icon{font-size:64px;text-align:center;margin-bottom:20px}
+.start-title{
+  text-align:center;font-size:32px;font-weight:900;
+  background:linear-gradient(135deg,#f39c12,#e74c3c,#27ae60);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:12px;
+}
+.start-subtitle{text-align:center;font-size:15px;color:#8899aa;margin-bottom:32px;line-height:1.6}
+.start-meta{display:flex;justify-content:center;gap:24px;margin-bottom:36px;flex-wrap:wrap}
+.start-meta-item{
+  text-align:center;padding:12px 18px;
+  background:rgba(255,255,255,0.04);border-radius:12px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.start-meta-item .num{font-size:24px;font-weight:800;color:#f39c12}
+.start-meta-item .label{font-size:12px;color:#8899aa;margin-top:2px}
+
+.btn{
+  display:block;width:100%;padding:16px;border:none;border-radius:14px;
+  font-size:18px;font-weight:700;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;letter-spacing:1px;font-family:inherit;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{
+  background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;
+  box-shadow:0 8px 32px rgba(243,156,18,0.2);
+}
+.btn-secondary{
+  background:rgba(255,255,255,0.06);color:#aab;
+  border:1px solid rgba(255,255,255,0.1);margin-top:12px;
+}
+
+/* QUIZ */
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.quiz-counter{font-size:13px;color:#8899aa;letter-spacing:1px}
+.quiz-counter span{color:#f39c12;font-weight:700;font-size:16px}
+.progress-bar{width:100%;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:32px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#f39c12,#27ae60);border-radius:3px;transition:width 0.4s ease}
+.question-scene{
+  display:inline-block;background:rgba(243,156,18,0.1);border:1px solid rgba(243,156,18,0.2);
+  color:#f39c12;padding:4px 14px;border-radius:20px;font-size:12px;letter-spacing:1px;margin-bottom:16px;
+}
+.question-text{
+  font-size:22px;font-weight:800;color:#fff;margin-bottom:28px;line-height:1.6;
+  padding:14px 18px;background:rgba(255,255,255,0.04);
+  border-left:3px solid #f39c12;border-radius:0 10px 10px 0;
+}
+.question-context{
+  font-size:14px;color:#99a;margin-bottom:20px;padding:14px 18px;
+  background:rgba(255,255,255,0.025);border-radius:10px;line-height:1.7;
+}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{
+  display:flex;align-items:flex-start;gap:14px;padding:18px 20px;
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.08);
+  border-radius:14px;cursor:pointer;transition:all 0.25s;
+  text-align:left;font-family:inherit;color:#d0d0d0;font-size:15px;line-height:1.5;
+}
+.option:hover{border-color:rgba(243,156,18,0.4);background:rgba(243,156,18,0.06);transform:translateX(4px)}
+.option.selected{border-color:#f39c12;background:rgba(243,156,18,0.1)}
+.option-letter{
+  width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:#889;flex-shrink:0;transition:all 0.25s;
+}
+.option:hover .option-letter{background:rgba(243,156,18,0.15);color:#f39c12}
+.option.selected .option-letter{background:#f39c12;color:#1a1a2e}
+
+/* RESULT */
+.result-header{text-align:center;margin-bottom:28px}
+.result-type-icon{font-size:72px;margin-bottom:12px}
+.result-type{font-size:36px;font-weight:900;margin-bottom:6px}
+.result-type-name{font-size:18px;color:#8899aa;letter-spacing:1px}
+.score-meter{
+  position:relative;height:16px;
+  background:linear-gradient(90deg,#e74c3c 0%,#f39c12 33%,#2980b9 66%,#27ae60 100%);
+  border-radius:8px;margin:24px 0 8px;
+}
+.score-indicator{
+  position:absolute;top:-12px;width:40px;height:40px;
+  background:#fff;border-radius:50%;box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:14px;color:#1a1a2e;
+  transform:translateX(-50%);transition:left 1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.score-labels{display:flex;justify-content:space-between;font-size:11px;color:#667;margin-bottom:28px}
+.result-analysis{
+  background:rgba(255,255,255,0.03);border-radius:16px;padding:24px;
+  margin-bottom:20px;border:1px solid rgba(255,255,255,0.06);
+}
+.result-analysis h3{font-size:16px;color:#fff;margin-bottom:12px}
+.result-analysis p{font-size:14px;color:#aab;line-height:1.7}
+.result-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.result-tag{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.tag-good{background:rgba(39,174,96,0.12);color:#27ae60;border:1px solid rgba(39,174,96,0.2)}
+.tag-warn{background:rgba(231,76,60,0.12);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.tag-tip{background:rgba(41,128,185,0.12);color:#2980b9;border:1px solid rgba(41,128,185,0.2)}
+.result-actions{display:flex;gap:12px;flex-wrap:wrap}
+.result-actions .btn{flex:1;min-width:160px}
+
+/* BREAKDOWN */
+.breakdown{margin-top:24px}
+.breakdown h4{font-size:14px;color:#8899aa;margin-bottom:12px;letter-spacing:1px}
+.breakdown-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.breakdown-item .q-num{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;
+}
+.breakdown-item .q-num.tns-q{background:rgba(39,174,96,0.15);color:#27ae60}
+.breakdown-item .q-num.myc-q{background:rgba(231,76,60,0.15);color:#e74c3c}
+.breakdown-item .q-text{flex:1;color:#aab}
+.breakdown-item .q-score{font-weight:700;font-size:12px}
+
+/* DISCUSSION */
+.discuss-card{
+  background:rgba(255,255,255,0.03);border-radius:14px;padding:18px 20px;
+  margin-bottom:12px;border-left:3px solid #f39c12;
+}
+.discuss-card .dc-header{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.discuss-card .dc-eoac{font-size:11px;color:#f39c12;letter-spacing:1px;margin-bottom:8px}
+.discuss-card .dc-body{font-size:13px;color:#aab;line-height:1.6}
+.dc-user-pick{border-color:#27ae60!important;background:rgba(39,174,96,0.08)!important}
+
+@media(max-width:500px){
+  .app{padding:32px 20px}
+  .start-title{font-size:24px}
+  .question-text{font-size:17px}
+  .result-type{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ====== START SCREEN ====== -->
+  <div class="screen active" id="startScreen">
+    <div class="start-icon">🧪</div>
+    <div class="start-title">MOT 关键时刻人格测试</div>
+    <div class="start-subtitle">
+      基于 IBM MOT 经典培训案例 × 老爸评测真实业务场景<br>
+      老爸抽检 · 老爸电商 · 老爸实验室 · 定制品事业部 · 老爸部落<br>
+      <strong>测测你在关键时刻的默认反应——你是 MYCO，还是 TNS？</strong>
+    </div>
+    <div class="start-meta">
+      <div class="start-meta-item"><div class="num" id="totalQuestions">13</div><div class="label">情景模拟题</div></div>
+      <div class="start-meta-item"><div class="num">2</div><div class="label">分钟完成</div></div>
+      <div class="start-meta-item"><div class="num">4</div><div class="label">种人格类型</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试 →</button>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:#556;">没有标准答案，选择你最真实的反应</p>
+  </div>
+
+  <!-- ====== QUIZ SCREEN ====== -->
+  <div class="screen" id="quizScreen">
+    <div class="quiz-header">
+      <div class="quiz-counter">第 <span id="currentNum">1</span> / <span id="totalNum">13</span> 题</div>
+      <div class="quiz-counter" style="font-size:12px;color:#667;" id="typeHint"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+    <div class="question-scene" id="sceneTag"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="question-context" id="questionContext"></div>
+    <div class="options" id="optionsContainer"></div>
+  </div>
+
+  <!-- ====== RESULT SCREEN ====== -->
+  <div class="screen" id="resultScreen">
+    <div class="result-header">
+      <div class="result-type-icon" id="resultIcon"></div>
+      <div class="result-type" id="resultType"></div>
+      <div class="result-type-name" id="resultName"></div>
+    </div>
+    <div class="score-meter"><div class="score-indicator" id="scoreIndicator" style="left:0%;">0</div></div>
+    <div class="score-labels"><span>MYCO</span><span>偏 MYCO</span><span>偏 TNS</span><span>TNS/Nancy</span></div>
+    <div class="result-analysis" id="resultAnalysis"></div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="restartQuiz()">🔄 重新测试</button>
+      <button class="btn btn-secondary" onclick="shareResult()">📋 截图分享</button>
+    </div>
+  </div>
+
+  <!-- ====== DISCUSSION SCREEN ====== -->
+  <div class="screen" id="discussionScreen">
+    <div class="result-header">
+      <div class="result-type-icon">💬</div>
+      <div class="result-type" style="color:#f39c12;">开放式讨论</div>
+      <div class="result-type-name">这道题没有标准答案——五个立场各有道理</div>
+    </div>
+    <div class="question-scene">📹 老爸评测科普 · 热点响应</div>
+    <div class="question-text" style="font-size:18px;margin-bottom:12px;">纸尿裤甲酰胺风波中，你更倾向哪种回应方式？</div>
+    <div class="question-context" id="discussionContext"></div>
+    <div class="options" id="discussionOptions"></div>
+    <div id="discussionReveal" style="display:none;margin-top:20px;">
+      <div style="text-align:center;font-size:14px;color:#f39c12;margin-bottom:20px;font-weight:700;">⬇️ 五个立场分别代表了 MOT 的不同侧重 ⬇️</div>
+      <div id="discussionCards"></div>
+      <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top:24px;">🔄 重新测试</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===================================================================
+// QUESTIONS (13 scored + 1 discussion)
+// ===================================================================
+const questions = [
+
+  // —— 场景① 前台/助理丢失信息 → 老爸抽检·商务 ——
+  {
+    id:1, scene:"🏷️ 老爸抽检 · 商务",
+    context:"【周五 17:40】一个中小品牌的市场总监辗转找到你，说看到竞品上了老爸评测科普视频后销量涨了很多，也想合作。但你初步了解后发现他们有一个成分的配方还不稳定，可能过不了实验室筛查。品牌方很诚恳，说可以先寄样品过来。",
+    question:"你怎么回应？",
+    options:[
+      {text:"「现在快下班了，你先寄样品过来，我下周让实验室出初筛数据，然后我们再谈。」",score:3,emoji:"A"},
+      {text:"「你先寄样品，同时我跟你说实话——你们那个成分可能是卡点。趁等样品的时间你们内部评估一下能不能改进，两边都不耽误。」",score:10,emoji:"B"},
+      {text:"「我先发你我们的抽检标准和流程文档，你对一下产品能不能过。能过再寄样品，省得白寄。」",score:7,emoji:"C"},
+      {text:"「你把产品资料发我邮箱，我整理后统一交给实验室排期。结果出来大概两周，到时候通知你。」",score:0,emoji:"D"}
+    ]
+  },
+  {
+    id:2, scene:"🏷️ 老爸抽检 · 商务",
+    context:"【续】品牌方按你说的寄了样品也改进了配方。初筛通过，但正式报告出来后发现有一项指标在国标范围内、却在老爸评测的内控标准里属于「不建议推荐」的区间。品牌方市场总监打电话来问结果。",
+    question:"你怎么回复？",
+    options:[
+      {text:"「报告出来了，有一项指标踩在我们的内控线上。我把报告发你，你看看能不能进一步优化？做到了我们再推进。」",score:7,emoji:"A"},
+      {text:"「检测过了国标，但跟我们内部推荐标准还有点差距。我先不给你排期，等你把指标提上来再说，这样对你对我们都负责。」",score:3,emoji:"B"},
+      {text:"「报告过了国标，但离我们的内控推荐线还差一点。我不想到时候给你出'不推荐'伤了你的品牌。你愿意继续优化的话我等你，实在不行我们也可以如实做——把数据和改进建议一起放出来。」",score:10,emoji:"C"},
+      {text:"「通过了国标，可以上。你在意的那个指标我会在视频里如实标注数值，让消费者自己判断。我们不遮掩。」",score:0,emoji:"D"}
+    ]
+  },
+  {
+    id:11, scene:"🏷️ 老爸抽检 · 商务",
+    context:"【续 Q2】品牌方按你的建议改进了配方，重新提交了样品。但实验室最近排期很满，正常流程要等三周。品牌方市场总监很着急——他们已经定了下个月的推广档期，赶不上就要再等一个季度。你答应过「两边不耽误」。",
+    question:"你怎么做？",
+    options:[
+      {text:"「实验室排期是统一的，我没法插队。你先调整推广档期往后延吧，安全第一。」",score:0,emoji:"A"},
+      {text:"「我帮你在系统里标记了加急，但最终还是要看实验室进度。有消息了我第一时间通知你。」",score:3,emoji:"B"},
+      {text:"「我去跟实验室协调一下，看能不能往前排。但不敢保证一定成，有进展随时同步你。」",score:7,emoji:"C"},
+      {text:"「我去找实验室主管协调——你是改进后复检，应该可以走快速通道。不管能不能加急，我明天下午前给你一个确定的时间节点，你不用干等。」",score:10,emoji:"D"}
+    ]
+  },
+
+  // —— 场景② 好心同事传错话 → 老爸实验室 ——
+  {
+    id:3, scene:"🔬 老爸实验室 · 工程师",
+    context:"商城客服在群里@你：「有个客户说买的老爸定制洗衣凝珠溶解不完全，怀疑配方变了。你帮我看看这批次的留样有没有问题？」消息是两小时前发的，客服已经下班了。你查了留样，成分没问题，但你注意到留样的包装密封性不太理想。",
+    question:"你回复什么？",
+    options:[
+      {text:"「留样检测成分没问题。但我看了一下，可能是包装密封性导致的受潮。你明天帮我问一下客户储存环境，我们再看。」",score:10,emoji:"A"},
+      {text:"「这批留样成分指标正常。客户说的问题可能是储存方式导致的，你让他拍一下储存环境和产品状态发过来。」",score:7,emoji:"B"},
+      {text:"「成分检测没问题。你让客户走售后流程，把产品寄回来我们复检一下。」",score:0,emoji:"C"},
+      {text:"「留样成分OK。但我注意到包装密封性有改进空间，可能是受潮了。你那边先给客户换货，我明天跟供应商确认包装标准。」",score:3,emoji:"D"}
+    ]
+  },
+  {
+    id:4, scene:"🔬 老爸实验室 · 工程师",
+    context:"【续】你进一步排查后发现确实有一小批产品的包装封口存在隐患，但不影响产品安全。供应商承认是产线上一个环节参数设置偏低。目前这批已经卖出去一部分了。",
+    question:"你的建议是？",
+    options:[
+      {text:"「不影响安全，不用召回。通知供应商下批次调整参数，已经卖出去的如果客户没反馈就不用主动去说。」",score:0,emoji:"A"},
+      {text:"「让商城客服留意有没有客户反馈同类问题，有反馈的主动换货。不主动通知所有人，避免引起不必要的担心。」",score:3,emoji:"B"},
+      {text:"「建议主动通知买到这批的客户：产品不影响安全，但如果发现溶解不完全可以免费换货。同时告知供应商已要求改进。」",score:10,emoji:"C"},
+      {text:"「让供应商出一个正式说明，解释包装问题不影响安全。我们在商品页加一条公告，客户自己决定要不要换。」",score:7,emoji:"D"}
+    ]
+  },
+
+  // —— 场景③ John Cameron 太忙太表面 → 主播+社群 ——
+  {
+    id:5, scene:"🎥 老爸电商 · 主播",
+    context:"一个ID很眼熟的老粉丝在直播间留言：「你们推荐的产品我用了一个月，效果跟你们说的完全不一样。我本来很信任你们才买的，现在有点心凉。」弹幕瞬间安静了，所有人都在等你。",
+    question:"你怎么回应？",
+    options:[
+      {text:"「每个人的体质和感受不一样，评测数据是实验室条件下的结论。你可以私信客服详细说说你的情况，我们帮你看一下。好，我们继续今天的产品。」",score:0,emoji:"A"},
+      {text:"「你先别心凉。你这个问题我记下了，下播后我让我们售后同事直接联系你，帮你一对一查清楚。不管是不是产品的问题，你用了不满意就是我们需要搞清楚的事。」",score:10,emoji:"B"},
+      {text:"「这款产品当时我们测了成分和安全性，数据是没问题的。你说的体验不好可能是使用方式或其他原因。下播后我让售后同事联系你，看看具体是什么情况。」",score:7,emoji:"C"},
+      {text:"「大家先别被影响。任何产品都不可能100%适用于每个人，我们对这款产品的整体评价是基于数据的。这位朋友可以联系客服售后。」",score:3,emoji:"D"}
+    ]
+  },
+  {
+    id:6, scene:"👥 老爸部落 · 私域运营",
+    context:"你在老爸部落社群里看到一个粉丝发了长文，说她跟了老爸评测五年，但最近两次购物体验让她犹豫了——一次物流破损、一次客服回复机械。文章下面已经有十几条共鸣回复。你负责这个社群。",
+    question:"你怎么处理？",
+    options:[
+      {text:"「感谢你五年的信任，也谢谢你愿意说出来。物流和客服的问题我会直接反馈给两个部门的负责人，同时我想单独跟你聊聊了解更多细节。」",score:7,emoji:"A"},
+      {text:"「五年的老粉丝了，看到这段话我也很难受。物流和客服的问题不是借口，是我们该做好的事。」然后私下联系她，把具体订单查清楚，在群里公开同步处理结果。",score:10,emoji:"B"},
+      {text:"私下联系这位粉丝安抚情绪，送一份小礼物表达歉意。同时在群里把话题自然引导到别的内容上，不要让负面情绪扩散。",score:0,emoji:"C"},
+      {text:"在群里回复：「收到你的反馈了，已经私信你了解具体情况。大家对产品和服务的任何意见都欢迎说，我们认真对待每一条。」然后私下去解决。",score:3,emoji:"D"}
+    ]
+  },
+
+  // —— 场景④ 副总裁讲太多听太少 → 品牌沟通+选品 ——
+  {
+    id:7, scene:"📹 老爸评测科普 · 品牌沟通",
+    context:"一个你们之前评为「不推荐」的品牌带了第三方实验室的完整报告来面谈，数据跟你们的结论有明显出入。对方态度很强硬，说你们的测试方法有漏洞，要求撤下视频并公开更正。屋里气氛很紧张。",
+    question:"你先说什么？",
+    options:[
+      {text:"「我先认真看完你们带来的报告。如果我们的方法确实有没覆盖到的地方，我们认。如果差异是方法不同导致的，我提议我们把两套方法拆开对比，看看到底差在哪。」",score:10,emoji:"A"},
+      {text:"「我们对所有品牌用的是同一套评测方法，标准是统一的。如果你们认为有漏洞，可以走正式申诉流程，我们会按照流程复核。」",score:0,emoji:"B"},
+      {text:"「我看了你们的报告，两边数据确实不一样。我建议找一个双方都认可的第三方实验室重新测一次，方法公开，不管结果如何我们都如实发布。」",score:7,emoji:"C"},
+      {text:"「我们先把两边报告的数据摆出来，找出差异点在哪。如果确实是我们方法的问题，该更正就更正，没什么不能面对的。」",score:3,emoji:"D"}
+    ]
+  },
+  {
+    id:8, scene:"🛒 老爸电商 · 选品",
+    context:"公司计划上一款自有品牌产品（老爸定制品）。你拿到样品后发现有两个指标不如商城在售的一款合作品牌产品——而那款产品的品牌方跟你们已经合作三年了。周一要开会定推广策略。",
+    question:"你在会上说什么？",
+    options:[
+      {text:"「自有品牌肯定要推，但我们可以跟合作品牌沟通一下定位差异，避免误会。」",score:0,emoji:"A"},
+      {text:"「推广时主打自有品牌的特点和差异化，不做横向对比。消费者自己会比较，我们不拦着，但也不主动引导对比。」",score:3,emoji:"B"},
+      {text:"「在推广之前先跟合作品牌坦诚沟通——我们自有品牌哪里比他们好、哪里不如他们。推广时如实呈现，不偏袒任何一方。」",score:7,emoji:"C"},
+      {text:"「就做横向对比——包括我们自己的产品。好的说好，不够好的也如实标注。老爸评测十年了，用户信的就是我们不双标。这个信任比任何单款产品的销量都值钱。」",score:10,emoji:"D"}
+    ]
+  },
+
+  // —— 场景⑤ 求助热线踢皮球 → 定制品事业部甲醛仪 ——
+  {
+    id:9, scene:"🏠 定制品事业部 · 甲醛仪漂流",
+    context:"一个用户通过「老爸享测」小程序预约了甲醛仪，测完后在后台留言：「测出来超标了，我现在该怎么办？能不能给我一些具体的除醛建议？」这个问题涉及检测解读（实验室）、除醛产品（商城）、以及装修方案（家装团队）。",
+    question:"你怎么回复？",
+    options:[
+      {text:"「感谢使用甲醛仪。关于超标后怎么办，你可以参考小程序里的除醛指南，里面有详细步骤和推荐产品。也可以加入老爸部落看社区讨论。」",score:0,emoji:"A"},
+      {text:"「超标数据我看到了，你先别焦虑。除醛这件事我们有十年经验，你把你家具体情况跟我说一下（面积、装修时间、通风条件），我帮你整理一个针对性的方案。」",score:10,emoji:"B"},
+      {text:"「我帮你把除醛产品推荐、检测解读和家装建议整合成一个方案，你不用分别去问不同部门。我先内部拉通，明天给你完整建议。」",score:7,emoji:"C"},
+      {text:"「我们实验室同事可以帮你分析数据，家装团队有针对不同超标程度的方案。你留一下电话，我安排对应的同事联系你。」",score:3,emoji:"D"}
+    ]
+  },
+  {
+    id:10, scene:"🏠 定制品事业部 · 甲醛仪漂流",
+    context:"【续】帮用户解决问题后你回头想：他的问题是检测+产品+方案三合一，但小程序流程是线性的——测完→看报告→结束。很多用户测出超标后不知道下一步怎么办，就流失了。",
+    question:"你觉得应该怎么做？",
+    options:[
+      {text:"先不改流程，在用户测完超标后自动推送一篇除醛指南文章链接。成本最低，覆盖所有人。",score:3,emoji:"A"},
+      {text:"跟小程序产品团队提需求：在检测结果页增加「超标了怎么办」入口，引导用户到整合了检测解读+产品+方案的页面，一站式解决。",score:7,emoji:"B"},
+      {text:"把过去三个月所有测出超标的用户数据拉出来，回访有多少人后续没得到跟进。然后联合实验室、商城、家装三个团队定一个原则：用户测出超标后48小时内必须有人主动联系给出完整方案。",score:10,emoji:"C"},
+      {text:"甲醛仪漂流是个公益项目，能做到免费检测已经很好了。除醛是商业部分，愿意花钱的自然会来找我们。不用强绑定。",score:0,emoji:"D"}
+    ]
+  },
+
+  // —— 场景⑥ 内部协作 ——
+  {
+    id:12, scene:"🎥 老爸电商 · 内部协作",
+    context:"直播间最近投流ROI跑得很好，5w预算花光了。但投流一停，销售额当场就往下跌——不是过两天的事，是现在进行时。你申请追加5w预算，财务说本月各项目费用已卡死，追加需要VP审批，流程至少2-3天。但投流不能等——断流就意味着当下每一分钟都在掉GMV。",
+    question:"你怎么处理？",
+    options:[
+      {text:"「财务有规定，那就等审批。先靠自然流量和粉丝复购撑一下，预算下来再补投。断流一阵子影响应该能接受。」",score:0,emoji:"A"},
+      {text:"「我马上整理申请材料——ROI截图、实时GMV趋势、预估断流损失——发给财务，尽量压缩审批时间。能快一小时是一小时。」",score:3,emoji:"B"},
+      {text:"「跟主管商量能不能从部门备用金里先垫5w续上，审批下来再回补。投流一断销售额当场掉，ROI正好的时候每一分钟都在浪费。」",score:7,emoji:"C"},
+      {text:"「把实时数据摆出来发给财务和主管：投流没断的时候GMV是多少、断了一个小时掉了多少。这笔钱不是在烧——是在接住正在发生的销售。申请走快速通道：先用备用金续上，VP审批后回补。不违规，但也不能眼看着销售额白白流走。」",score:10,emoji:"D"}
+    ]
+  },
+  {
+    id:13, scene:"📹 老爸评测科普 · 内容创作",
+    context:"你正在出一个定制品视频脚本。定制品组的商务老师希望你突出产品核心卖点，这是公司自有品牌；技术老师坚持加一段硬核成分分析，但这会拖慢节奏，普通观众可能听不懂；运营同学觉得脚本太长，希望控制在2分钟内保证完播率。三方的诉求互相矛盾，明天交脚本。",
+    question:"你的脚本思路是？",
+    options:[
+      {text:"「以定制品商务需求为主，自有品牌是公司战略。技术内容简化放末尾快速带过，控制时长优先保证完播率。」",score:0,emoji:"A"},
+      {text:"「按技术老师要求加硬核内容，专业准确最重要。商务卖点适量保留。时长不是第一位的——我们不是靠完播率吃饭的营销号。」",score:3,emoji:"B"},
+      {text:"「跟三方分别沟通各退一步：卖点精简、硬核内容用字幕/图表补充不占主时长、整体控制在2分半。折中方案大家都过得去。」",score:7,emoji:"C"},
+      {text:"「退一步想——这条视频最终是谁在看？是普通消费者。所以我用大白话讲技术内容、用数据撑卖点、节奏紧凑不注水。三方需求按'对消费者有没有价值'来排序取舍——对消费者没用的东西，再重要的人也说服不了我放进去。」",score:10,emoji:"D"}
+    ]
+  }
+];
+
+// ===================================================================
+// EOAC NOTES
+// ===================================================================
+const eoacNotes = {
+  1:{0:"缺少探索与提议——直接走流程排期，没有先了解品牌的真实处境和卡点",3:"探索弱——按部就班推进，缺少对品牌方的主动提醒和建议",7:"探索+提议不错——给出了实用建议（先看标准），但少了主动帮品牌分析卡点的行动",10:"①探索→先了解卡点 ②提议→诚实告知+给出改进方向 ③行动→两边不耽误同步推进"},
+  2:{0:"缺少探索——只看到「过了国标」就放行，没考虑品牌被评「不推荐」的后果",3:"探索偏弱——看到了风险但处理偏自保（暂停），缺少为品牌着想的替代方案",7:"探索+提议不错——给了改进方向，但缺少「万一改进不了」的Plan B",10:"①探索→理解品牌处境 ②提议→给两个选项（改进/如实做） ③行动→始终站在消费者和品牌双赢角度"},
+  3:{0:"缺少探索——直接走售后流程，没有先分析问题可能的原因",3:"探索偏弱——发现了包装问题但没追根因，只做了表面处理",7:"有探索——分析了可能原因，但缺少确认闭环（需确认客户储存环境）",10:"①探索→分析可能原因（密封性/受潮） ②提议→给出排查方向 ③行动→请客服协作验证 ④确认→闭环确认根因"},
+  4:{0:"缺少确认——认为「不影响安全」就不管了，忽略了消费者「知情」的权利",3:"有行动但被动——等客户反馈才处理，缺少主动担当",7:"行动不错——让供应商出说明，但把沟通责任转给了供应商而非自己面对客户",10:"①探索→排查确认根因 ②提议→主动通知+免费换货 ③行动→告知改进结果 ④确认→对买到这批的客户完成闭环"},
+  5:{0:"缺少探索——用通用话术回避了粉丝的真实感受，没有先接住情绪",3:"缺少探索——急着解释和维护氛围，没有先理解这个粉丝为什么「心凉」",7:"有探索和行动——安排了售后跟进，但缺少对情绪的直接承接",10:"①探索→先接住情绪（「先别心凉」） ②提议→不急着辩解，安排专人跟进 ③行动→承诺查清楚 ④确认→让粉丝感受到被重视"},
+  6:{0:"缺少确认——私下安抚+转移话题，问题本身没有被解决和公开回应",3:"探索偏弱——公开说了「收到」，但缺少具体行动承诺和时间节点",7:"有探索和行动——私下深聊+反馈部门，但缺少在社群里的公开闭环",10:"①探索→公开承接情绪 ②提议→承诺查清楚 ③行动→私下查订单+反馈部门 ④确认→在群里公开同步处理结果"},
+  7:{0:"缺少探索——先强调自己的标准和流程，没有先听对方的数据和观点",3:"缺少提议——表示愿意更正，但没有主动提出具体的解决方案",7:"有提议——提出重新检测，但少了对自己方法局限性的坦诚反思",10:"①探索→先认真看对方报告 ②提议→拆开两套方法对比+联合测试 ③行动→承认可能有盲区 ④确认→以透明为最终交代"},
+  8:{0:"缺少探索——只考虑战略目标和关系维护，忽略了「消费者信任」这个根本",3:"缺少提议——规避对比，把判断责任推给消费者自己做",7:"有探索和提议——坦诚沟通+如实呈现，但少了「不双标」的根本原则",10:"①探索→认清自营品不如合作款的现实 ②提议→做横向对比 ③行动→如实标注优劣 ④确认→守住十年品牌根基「不双标」"},
+  9:{0:"缺少提议——给了资源但没有整合，让用户自己去拼凑方案",3:"探索偏弱——把需求拆散分给不同部门，用户还是要面对多个人",7:"有提议和行动——整合方案+明天给建议，但缺少对「超标焦虑」的情绪承接",10:"①探索→先安抚焦虑+了解具体情况 ②提议→针对性方案 ③行动→内部拉通 ④确认→一站式解决不用分别找人"},
+  10:{0:"缺少确认——认为公益就够了，忽略了用户体验的完整闭环",3:"有行动但被动——推送链接是单向的，没有确认用户是否真的得到了帮助",7:"有提议——产品优化方向对，但缺少数据驱动和跨团队拉通",10:"①探索→用数据回访了解流失情况 ②提议→跨团队定原则 ③行动→48小时主动联系 ④确认→完整闭环+持续改进"},
+  11:{0:"缺少行动——直接让品牌调整档期，没有为自己承诺过的「两边不耽误」做任何推动",3:"有行动但被动——标记加急但没有主动协调，确认环节弱（「有消息通知你」是让品牌被动等）",7:"有行动——主动去协调排期，但少了给品牌一个确定的时间承诺（「不敢保证」让对方悬着心）",10:"①行动→主动找实验室协调+找快速通道 ②确认→给明确时间承诺「明天下午前告诉你」 ③完整闭环——说到的要做到"},
+  12:{0:"缺少探索和行动——流程优先于正在发生的销售流失，没有用实时数据让财务看到紧迫性",3:"有探索但行动弱——准备了材料但仍在被动等审批，没有突破性推动",7:"有行动——找备用金续投是主动推进，但少了用实时数据（断流前后对比）说服财务",10:"①探索→用实时GMV断流数据量化损失 ②提议→备用金续投+VP后审批 ③行动→算清「每一分钟都在掉」说服财务 ④确认→不违规不耽误"},
+  13:{0:"缺少探索——以内部需求（定制品战略）排序，忘了「谁才是真正的客户——看视频的消费者」",3:"探索偏弱——把专业准确性当作唯一标准，忽略了「消费者能不能听懂」同样重要",7:"有探索和提议——做了三方折中，但本质是内部妥协而非从消费者出发的最优解",10:"①探索→追问「消费者需要什么」 ②提议→以消费者价值排序三方需求 ③行动→大白话讲专业+数据撑卖点+节奏紧凑 ④确认→对消费者没用的不放"}
+};
+
+// ===================================================================
+// DISCUSSION QUESTION (unscored, shown after results)
+// ===================================================================
+const discussionQuestion = {
+  context:"6月18日，测评博主「靠谱老王」称多品牌纸尿裤检出甲酰胺，冲上热搜第一。此后品牌公布第三方报告称「未检出」，专业人士质疑原检测方法不严谨，官方联合调查组已介入。但纸尿裤国标（GB/T 28004.1—2021）确实没有甲酰胺限量要求——这是真实的监管空白。消费者不知道该信谁，老爸评测后台涌入几千条私信。公司内部拉群讨论，以下四种立场——",
+  options:[
+    {
+      emoji:"A", role:"公关",
+      text:"「纸尿裤国标没有甲酰胺检测要求，我们没法判定合格还是不合格。品牌和原博主各执一词，官方调查没出结论。这个阶段说什么都会被截图放大。等调查结论出来再做深度科普——不是怂，是专业。」",
+      eoacFocus:"E · 探索",
+      eoacExplain:"公关的思维核心是「先搜集足够信息再做判断」——这是探索（Explore）的极致体现。在信息混乱的节点选择等待，避免在事实不清时给出可能错误的信号。但这个选择的代价是：消费者在恐慌中找不到你，沉默本身也是一种表态。"
+    },
+    {
+      emoji:"B", role:"技术老师",
+      text:"「检出不等于有毒。甲酰胺被欧盟列为生殖毒性物质，但毒性看剂量和暴露途径。争议的核心不是毒性多大，而是检测方法是否可靠。我们可以做这件事：不站任何一方，把甲酰胺的毒理学数据、欧盟为什么限制、家长真正需要担心什么、不需要担心什么，讲清楚。」",
+      eoacFocus:"O · 提议",
+      eoacExplain:"技术老师思维的核心是「给消费者最准确的答案」——这是提议（Offer）的极致体现。不急着发声，但要确保一旦发声就经得起推敲。这个选择的代价是：深度科普需要时间，等写出来热度可能过了，或者官方调查先出了结论。"
+    },
+    {
+      emoji:"C", role:"账号运营",
+      text:"「热搜第一，后台炸了。如果我们不出声，消费者只能看营销号——标题全是'纸尿裤有毒！'那种。老爸评测存在的意义就是这种时候给一个靠谱的声音。不一定今天发，但48小时内必须回应。哪怕就是'我们正在关注，正在梳理信息，有结论告诉大家'——也比沉默强。」",
+      eoacFocus:"A · 行动",
+      eoacExplain:"运营思维的核心是「不能缺席消费者最需要你的时刻」——这是行动（Action）的极致体现。不要求立刻给出所有答案，但要求立刻给出一个态度、一个时间承诺。这个选择的代价是：48小时内的回应可能信息量有限，被部分人解读为「蹭热度」。"
+    },
+    {
+      emoji:"D", role:"直播",
+      text:"「今晚直播间100%被刷屏。观众不会接受'暂时不便回应'——在他们眼里那不叫谨慎，叫逃避。不用今晚给出所有答案，但至少可以坦诚说：注意到了、正在核实、有结果同步。目前可以确定两个事实：第一、国标确实没有甲酰胺限量，这是制度空白；第二、不同检测方法结论可能不一样。粉丝要的是有人在这个混乱时刻给他们一个态度。」",
+      eoacFocus:"E + C · 探索+确认",
+      eoacExplain:"直播思维的核心是「消费者此刻就在你面前，你不能沉默」——这是探索+确认（Explore + Confirm）的结合。坦诚说出'知道的'和'还不知道的'，给消费者一个可以相信的人。这个选择的代价是：信息不完整，说'不知道'需要勇气，且可能被截取片段曲解。"
+    },
+    {
+      emoji:"E", role:"客服",
+      text:"「后台全是家长的私信，有的发了十几条，语气从焦虑变成了愤怒。我们不能只说'正在关注'然后就没了。能不能先出一个统一的回复话术？哪怕就是告诉家长'目前没有证据表明正常使用会造成伤害，我们正在跟进核实，有确定信息第一时间公告'——至少让每个客服有东西可以回。现在每个客服都在用自己的话在回，口径都不一样，反而容易出问题。」",
+      eoacFocus:"C · 确认",
+      eoacExplain:"客服思维的核心是「每一个焦虑的个体都需要被接住」——这是确认（Confirm）的极致体现。不需要深度科普，不需要选边站，需要的是当下这一刻让每一个来问的家长感觉到「有人听见我了，有人正在处理」。这个选择的代价是：统一话术如果后续被事实推翻，需要逐一更正。"
+    }
+  ]
+};
+
+// ===================================================================
+// STATE & CORE FUNCTIONS
+// ===================================================================
+let currentQuestion = 0;
+let answers = [];
+
+function startQuiz() {
+  currentQuestion = 0;
+  answers = [];
+  document.getElementById('totalQuestions').textContent = questions.length;
+  document.getElementById('totalNum').textContent = questions.length;
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('resultScreen').classList.remove('active');
+  document.getElementById('discussionScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.add('active');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('currentNum').textContent = currentQuestion + 1;
+  document.getElementById('progressFill').style.width = (currentQuestion / questions.length * 100) + '%';
+  document.getElementById('sceneTag').textContent = q.scene;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('questionContext').textContent = '📌 ' + q.context;
+  document.getElementById('typeHint').textContent = '';
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="option-letter">' + opt.emoji + '</span><span>' + opt.text + '</span>';
+    btn.addEventListener('click', function() { selectOption(i); });
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(index) {
+  var q = questions[currentQuestion];
+  answers.push({ question: q, chosen: index, score: q.options[index].score });
+
+  var allOpts = document.querySelectorAll('#optionsContainer .option');
+  allOpts.forEach(function(o) { o.classList.remove('selected'); });
+  allOpts[index].classList.add('selected');
+
+  var score = q.options[index].score;
+  var hint, hintColor;
+  if (score === 10) { hint = '👏 纯正 TNS/Nancy 思维'; hintColor = '#27ae60'; }
+  else if (score === 7) { hint = '🌱 方向对了，还差一小步'; hintColor = '#2980b9'; }
+  else if (score === 3) { hint = '⚠️ 听起来合理，但有 MYCO 的影子'; hintColor = '#f39c12'; }
+  else { hint = '🔴 典型的 MYCO 思维'; hintColor = '#e74c3c'; }
+  document.getElementById('typeHint').textContent = hint;
+  document.getElementById('typeHint').style.color = hintColor;
+
+  setTimeout(function() {
+    currentQuestion++;
+    if (currentQuestion >= questions.length) {
+      showResult();
+    } else {
+      renderQuestion();
+    }
+  }, 600);
+}
+
+// ===================================================================
+// RESULT
+// ===================================================================
+function showResult() {
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('resultScreen').classList.add('active');
+
+  var totalScore = answers.reduce(function(sum, a) { return sum + a.score; }, 0);
+  var maxScore = questions.length * 10;
+  var pct = totalScore / maxScore;
+  var topCount = answers.filter(function(a) { return a.score === 10; }).length;
+  var goodCount = answers.filter(function(a) { return a.score === 7; }).length;
+  var weakCount = answers.filter(function(a) { return a.score === 3; }).length;
+  var badCount = answers.filter(function(a) { return a.score === 0; }).length;
+
+  var typeIcon, typeText, typeName, analysisHTML, tagsHTML, scoreColor;
+
+  if (pct >= 0.8) {
+    typeIcon = '🌟'; typeText = '你是 Nancy！'; typeName = 'TNS 型 · 关键时刻大师'; scoreColor = '#27ae60';
+    analysisHTML = '<p>在 ' + questions.length + ' 个关键时刻中，你有 <strong>' + topCount + ' 次</strong>做出了纯正的 TNS/Nancy 式选择。你的默认模式是<strong>「先接住、再理解、然后搞定」</strong>。</p><p style="margin-top:8px;">和 TNS 公司的 Nancy 一样——客户的问题到你这里，你不会推、不会躲、不会只做分内的事。在老爸评测，你就是信任的守护者。</p>';
+    tagsHTML = '<span class="result-tag tag-good">🫂 客户为先</span><span class="result-tag tag-good">🎯 主动闭环</span><span class="result-tag tag-good">💪 信任守护者</span>';
+  } else if (pct >= 0.6) {
+    typeIcon = '🌱'; typeText = '你是潜力股！'; typeName = '偏 TNS 型 · 方向对了'; scoreColor = '#2980b9';
+    analysisHTML = '<p>你有 <strong>' + topCount + ' 次</strong>纯正 TNS 选择 + <strong>' + goodCount + ' 次</strong>方向对了的选择。大方向是对的！</p><p style="margin-top:8px;">但在 ' + (weakCount + badCount) + ' 个场景中，你的第一反应还是偏向 MYCO 的惯性——常见陷阱是：<strong>用「流程正确」代替「客户需要」</strong>，或者把问题转出去就觉得责任结束了。</p><p style="margin-top:8px;">记住：谁接到问题，谁就是客户眼中的「老爸评测」。转出去≠解决了。</p>';
+    tagsHTML = '<span class="result-tag tag-good">👍 方向正确</span><span class="result-tag tag-tip">🔧 闭环意识待加强</span><span class="result-tag tag-tip">💡 多问"然后呢"</span>';
+  } else if (pct >= 0.4) {
+    typeIcon = '⚠️'; typeText = '你有 MYCO 的影子'; typeName = '偏 MYCO 型 · 需要警惕'; scoreColor = '#f39c12';
+    analysisHTML = '<p>你的 ' + questions.length + ' 次选择中有 <strong>' + (weakCount + badCount) + ' 次</strong>偏向了 MYCO 的思维模式。</p><p style="margin-top:8px;">MYCO 不是一个坏公司，它的员工都很专业、很努力。但他们的问题在于：<strong>每个人都只做了「分内的事」，却没有人在做「客户需要的事」</strong>。这就是 4500 万美元订单丢失的原因。</p><p style="margin-top:8px;">下一次面对客户时，试着多想一步：<strong>如果我是对方，我现在最需要的是什么？</strong></p>';
+    tagsHTML = '<span class="result-tag tag-warn">🔴 流程思维为主</span><span class="result-tag tag-tip">🔄 需要切换视角</span><span class="result-tag tag-tip">💡 从 Think Customer 开始</span>';
+  } else {
+    typeIcon = '🆘'; typeText = '你是 MYCO 本 CO…'; typeName = 'MYCO 型 · 需要重新理解 MOT'; scoreColor = '#e74c3c';
+    analysisHTML = '<p>你的选择几乎都是 MYCO 式的——' + badCount + ' 次典型 MYCO 思维 + ' + weakCount + ' 次变体。但这不代表你不好，而是你可能<strong>还没有真正理解 MOT 的含义</strong>。</p><p style="margin-top:8px;">MYCO 每一个员工单独看都是好人：前台认真转接、销售努力卖货、副总裁自信介绍方案。但他们都忘了问一句话：<strong>客户到底需要什么？</strong></p><p style="margin-top:8px;">Think Customer, Act Win-Win。下次遇到客户问题时，先别急着给答案——<strong>先站在对方角度想三秒钟</strong>。</p>';
+    tagsHTML = '<span class="result-tag tag-warn">🔴 自保优先</span><span class="result-tag tag-warn">🔴 流程导向</span><span class="result-tag tag-tip">💡 从 Think Customer 开始</span>';
+  }
+
+  document.getElementById('resultIcon').textContent = typeIcon;
+  document.getElementById('resultType').textContent = typeText;
+  document.getElementById('resultType').style.color = scoreColor;
+  document.getElementById('resultName').textContent = typeName;
+  document.getElementById('resultAnalysis').innerHTML = '<h3>📊 你的测试结果</h3>' + analysisHTML + '<div class="result-tags">' + tagsHTML + '</div>';
+
+  setTimeout(function() {
+    var indicator = document.getElementById('scoreIndicator');
+    indicator.style.left = Math.max(3, Math.min(97, pct * 100)) + '%';
+    indicator.textContent = totalScore;
+  }, 300);
+
+  // Breakdown
+  var breakdownHTML = '<div class="breakdown"><h4>📋 逐题回顾 · EOAC 分析</h4><p style="font-size:11px;color:#556;margin-bottom:16px;">E=探索 O=提议 A=行动 C=确认</p>';
+  answers.forEach(function(a, i) {
+    var s = a.score;
+    var scoreLabel, scoreClass;
+    if (s === 10) { scoreLabel = 'TNS +10'; scoreClass = 'tns-q'; }
+    else if (s === 7) { scoreLabel = '偏TNS +7'; scoreClass = 'tns-q'; }
+    else if (s === 3) { scoreLabel = '偏MYCO +3'; scoreClass = 'myc-q'; }
+    else { scoreLabel = 'MYCO +0'; scoreClass = 'myc-q'; }
+    var note = eoacNotes[a.question.id] ? eoacNotes[a.question.id][s] : '';
+    breakdownHTML += '<div class="breakdown-item" style="flex-wrap:wrap;padding:10px 0;"><div style="display:flex;align-items:center;gap:10px;width:100%;"><div class="q-num ' + scoreClass + '">' + (i+1) + '</div><div class="q-text" style="flex:1;">' + a.question.scene.replace(/[🎥📞💬🛒⏰🔍🏆📋🚧😡🏷️🔬👥🏢🛒🏠📹]/g,'').trim() + ' — ' + a.question.question + '</div><div class="q-score" style="color:' + (s>=7?'#27ae60':s>=3?'#f39c12':'#e74c3c') + '">' + scoreLabel + '</div></div><div style="width:100%;padding-left:38px;font-size:12px;color:' + (s>=7?'#7ab':'#a87') + ';line-height:1.5;margin-top:4px;">📌 ' + note + '</div></div>';
+  });
+  breakdownHTML += '</div>';
+  document.getElementById('breakdown').innerHTML = breakdownHTML;
+
+  // Add discussion button
+  var existingBtn = document.getElementById('discussBtn');
+  if (!existingBtn) {
+    var discussBtn = document.createElement('button');
+    discussBtn.id = 'discussBtn';
+    discussBtn.className = 'btn btn-secondary';
+    discussBtn.textContent = '💬 进入开放式讨论题 →';
+    discussBtn.onclick = showDiscussion;
+    var actionsDiv = document.querySelector('.result-actions');
+    if (actionsDiv) actionsDiv.appendChild(discussBtn);
+  }
+
+  document.getElementById('resultScreen').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===================================================================
+// RESTART & SHARE
+// ===================================================================
+function restartQuiz() {
+  currentQuestion = 0;
+  answers = [];
+  document.getElementById('startScreen').classList.add('active');
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('resultScreen').classList.remove('active');
+  document.getElementById('discussionScreen').classList.remove('active');
+  document.getElementById('progressFill').style.width = '0%';
+  var discOpts = document.getElementById('discussionOptions');
+  if (discOpts) discOpts.style.display = '';
+  var discReveal = document.getElementById('discussionReveal');
+  if (discReveal) discReveal.style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareResult() {
+  var totalScore = answers.reduce(function(sum, a) { return sum + a.score; }, 0);
+  var maxScore = questions.length * 10;
+  var pct = totalScore / maxScore;
+  var typeLabel;
+  if (pct >= 0.8) typeLabel = 'TNS/Nancy 型 · 关键时刻大师';
+  else if (pct >= 0.6) typeLabel = '偏 TNS 型 · 方向对了';
+  else if (pct >= 0.4) typeLabel = '偏 MYCO 型 · 需要警惕';
+  else typeLabel = 'MYCO 型 · 需要重新理解 MOT';
+  var text = '🧪 MOT 关键时刻人格测试\n我的结果是：' + typeLabel + '\n得分：' + totalScore + '/' + maxScore + '\n\nThink Customer · Act Win-Win';
+  if (navigator.share) { navigator.share({ text: text }); }
+  else { navigator.clipboard.writeText(text).then(function() { alert('结果已复制到剪贴板，可以粘贴分享！'); }); }
+}
+
+// ===================================================================
+// DISCUSSION
+// ===================================================================
+function showDiscussion() {
+  document.getElementById('resultScreen').classList.remove('active');
+  document.getElementById('discussionScreen').classList.add('active');
+  document.getElementById('discussionContext').textContent = '📌 ' + discussionQuestion.context;
+  document.getElementById('discussionReveal').style.display = 'none';
+
+  var container = document.getElementById('discussionOptions');
+  container.style.display = '';
+  container.innerHTML = '';
+  discussionQuestion.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="option-letter">' + opt.emoji + '</span><span>' + opt.text + '</span>';
+    btn.addEventListener('click', function() { revealDiscussion(i); });
+    container.appendChild(btn);
+  });
+  document.getElementById('discussionScreen').scrollIntoView({ behavior: 'smooth' });
+}
+
+function revealDiscussion(index) {
+  var allOpts = document.querySelectorAll('#discussionOptions .option');
+  allOpts.forEach(function(o) { o.classList.remove('selected'); });
+  allOpts[index].classList.add('selected');
+
+  document.getElementById('discussionOptions').style.display = 'none';
+  document.getElementById('discussionReveal').style.display = 'block';
+
+  var pickedRole = discussionQuestion.options[index].role;
+  var cardsHTML = discussionQuestion.options.map(function(opt, i) {
+    return '<div class="discuss-card' + (i === index ? ' dc-user-pick' : '') + '"><div class="dc-header">' + opt.emoji + ' · ' + opt.role + (i === index ? ' ← 你的选择' : '') + '</div><div class="dc-eoac">侧重：' + opt.eoacFocus + '</div><div class="dc-body">' + opt.eoacExplain + '</div></div>';
+  }).join('');
+
+  document.getElementById('discussionCards').innerHTML =
+    '<p style="font-size:13px;color:#889;text-align:center;margin-bottom:16px;">你选择了 <strong style="color:#f39c12;">' + pickedRole + '</strong> 的立场。<br>这道题没有标准答案——五个方向都体现了 MOT 精神的不同侧面。</p>' +
+    cardsHTML +
+    '<p style="font-size:12px;color:#556;text-align:center;margin-top:16px;line-height:1.7;">MOT 关键时刻的核心不是「选哪个」，而是<strong>你知道自己为什么选</strong>。<br>建议跟选了不同方向的同事聊聊——为什么 TA 觉得公关是对的而你觉得直播才是对的？<br>这种对话本身就是最好的 MOT 训练。</p>';
+
+  document.getElementById('discussionReveal').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
